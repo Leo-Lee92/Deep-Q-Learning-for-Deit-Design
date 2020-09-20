@@ -97,28 +97,34 @@ def data_preprocessing(food_df, list_of_menus_df):
     non_menu_by_position_label_mat = pd.DataFrame(np.zeros((len(foods_not_in_menu), 14)), index = foods_not_in_menu)
 
     for index, val in enumerate(foods_not_in_menu):
-        if food_df[food_df['name'] == val]['group'].tolist()[0] == 0:
-            non_menu_by_position_label_mat.iloc[index, 0] = 1
-        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 1:
+        if food_df[food_df['name'] == val]['group'].tolist()[0] == 0:           # group == 0 : 죽 그룹
+            non_menu_by_position_label_mat.iloc[index, 0] = 1  
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 1:         # group == 1 : 밥 그룹
             target_position = [2, 9]
             non_menu_by_position_label_mat.iloc[index, target_position] = 1
-        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 2:
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 2:         # group == 2 : 일품 그룹
+            target_position = [2, 9]
+            non_menu_by_position_label_mat.iloc[index, target_position] = 1     
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 3:         # group == 3 : 국 그룹
             target_position = [3, 10]
             non_menu_by_position_label_mat.iloc[index, target_position] = 1
-        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 3:
-            target_position = [4, 5, 11, 12]
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 4:         # group == 4 : 주찬 그룹
+            target_position = [4, 11]
             non_menu_by_position_label_mat.iloc[index, target_position] = 1
-        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 4:
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 5:         # group == 5 : 부찬 그룹
+            target_position = [5, 12]
+            non_menu_by_position_label_mat.iloc[index, target_position] = 1     
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 6:         # group == 6 : 김치 그룹
             target_position = [6, 13]
             non_menu_by_position_label_mat.iloc[index, target_position] = 1
-        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 5:
-            target_position = [0, 7]
-            non_menu_by_position_label_mat.iloc[index, target_position] = 1
-        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 6:
-            target_position = [1, 8]
-            non_menu_by_position_label_mat.iloc[index, target_position] = 1
-        else:
-            target_position = [2, 9]
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 6:         # group == 7 : 간식 그룹
+            target_position = [0, 1, 7, 8]
+            non_menu_by_position_label_mat.iloc[index, target_position] = 1        
+        elif food_df[food_df['name'] == val]['group'].tolist()[0] == 6:         # group == 8 : 유제품 그룹
+            target_position = [0, 1, 7, 8]
+            non_menu_by_position_label_mat.iloc[index, target_position] = 1        
+        else:                                                                   # group == 8 : empty 그룹
+            target_position = [3, 10]
             non_menu_by_position_label_mat.iloc[index, target_position] = 1
 
 

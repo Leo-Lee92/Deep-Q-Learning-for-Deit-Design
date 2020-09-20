@@ -8,7 +8,8 @@ import copy
 class env:
     def __init__(self, food_df, menu_by_position_label_mat, menu_by_position_label_ones, action_size, reward_depth):
         self.food_df = food_df
-        self.menu_by_position_label_mat = menu_by_position_label_mat
+        # self.menu_by_position_label_mat = menu_by_position_label_mat
+        self.menu_by_position_label_mat = menu_by_position_label_ones
         self.menu_by_position_label_ones = menu_by_position_label_ones
 
         self.one_hot_encoding = None
@@ -27,7 +28,7 @@ class env:
         self.action_MAX_reward_distribution.columns = col
 
 
-    ## 초기 샘플 샘플링
+    ## 최초의 식단 (음식리스트)과 식단의 원핫인코딩 행렬 구성
     def get_initial_sample(self, target_foods_df, number_of_slots):
 
         # (menu_by_position_label_ones 랑 mat을 class에선 전역변수로 해줘야함)
@@ -40,7 +41,7 @@ class env:
 
         for index, menu in enumerate(self.one_hot_encoding.index.tolist()):
             selected_position = self.one_hot_encoding.columns.tolist()
-            one_hot = pd.DataFrame.sample(self.one_hot_encoding.iloc[index], n = 1, weights = distribution.iloc[index]).index[0]
+            one_hot = pd.DataFrame.sample(self.one_hot_encoding.iloc[index, :], n = 1, weights = distribution.iloc[index, :]).index[0]
             selected_position.pop(one_hot)
             self.one_hot_encoding.iloc[index, selected_position] = 0
 
@@ -69,7 +70,6 @@ class env:
         # (3) 포지션
         for ind, val in enumerate(one_hot_encoding_sample.index):
             val_group = self.food_df[self.food_df['name'] == val]['group']
-
             col = one_hot_encoding_sample.iloc[ind, :][one_hot_encoding_sample.iloc[ind, :] > 0].index[0]
             one_hot_encoding_sample.iloc[ind, col] = int(val_group)
 
@@ -88,7 +88,6 @@ class env:
     def step_update(self, target_foods_df, sampled_food_list, action, state_vector, target_reward, activated_reward_mat, max_reward): 
         check_list = dict()
 
-        # 최대보상의 초기회상
         if target_reward < 0: # pre_reward가 음수면, reward (3) - pre_reward (-1) = 4와 같이, 실제 보상이상을 얻었다고 인식되므로
             target_reward = 0 # pre_reward가 음수일 경우 0으로 세팅.
 
@@ -117,14 +116,6 @@ class env:
         activated_reward_mat[reward, :] += activated_reward
 
         reward_gradient = (reward - target_reward)
-
-        # if reward_gradient > 0:
-        #     reward = reward
-        # elif reward_gradient == 0:
-        #     reward = 0
-        #     # reward = reward
-        # else:
-        #     reward = reward_gradient 
         
 
         # 만약 reward가 pre_reward보다 크다면 해당 action에서 해당 new_food가 나올 빈도(확률)를 +1 해주기
@@ -143,9 +134,6 @@ class env:
         check_list['reward'] = reward
         check_list['reward_gradient'] = reward_gradient
 
-        # action_dist = action_distribution
-        # food_dist = food_distribution
-        
         return(check_list, one_hot_encoding_update, activated_reward_mat, self.action_reward_distribution, self.action_MAX_reward_distribution)
 
     # 수평보상을 계산하는 함수

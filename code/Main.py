@@ -44,74 +44,79 @@ list_of_menus_df = [menu_morning_df, menu_lunch_df, menu_afternoon_df, menu_dinn
 ## (2) 데이터 전처리
 concat_melted_df, menu_by_position_count, menu_by_position_label_mat, menu_by_position_label_ones = data_preprocessing(food_df, list_of_menus_df)
 
-## (3) 초기값은 균일확률로 처리
-menu_by_position_label_mat[menu_by_position_label_mat >= 0] = 0
-
 ## (4) 확정적 슬롯으로 처리
-jook = food_df['name'][food_df['group'] == 0].tolist()
-bab = food_df['name'][food_df['group'] == 1].tolist()
-ilpum = food_df['name'][food_df['group'] == 2].tolist()
-gook = food_df['name'][food_df['group'] == 3].tolist()
-juchan = food_df['name'][food_df['group'] == 4].tolist()
-buchan = food_df['name'][food_df['group'] == 5].tolist()
-kimchi = food_df['name'][food_df['group'] == 6].tolist()
-gansik = food_df['name'][food_df['group'] == 7].tolist()
-euje = food_df['name'][food_df['group'] == 8].tolist()
-empty_food = food_df['name'][food_df['group'] == 9].tolist()
+jook = food_df['name'][food_df['group'] == 0].tolist()          # 죽 그룹에 속한 음식들 리스트
+bab = food_df['name'][food_df['group'] == 1].tolist()           # 밥 그룹에 속한 음식들 리스트
+ilpum = food_df['name'][food_df['group'] == 2].tolist()         # 일품 그룹에 속한 음식들 리스트
+gook = food_df['name'][food_df['group'] == 3].tolist()          # 국 그룹에 속한 음식들 리스트
+juchan = food_df['name'][food_df['group'] == 4].tolist()        # 주찬 그룹에 속한 음식들 리스트
+buchan = food_df['name'][food_df['group'] == 5].tolist()        # 부찬 그룹에 속한 음식들 리스트
+kimchi = food_df['name'][food_df['group'] == 6].tolist()        # 김치 그룹에 속한 음식들 리스트
+gansik = food_df['name'][food_df['group'] == 7].tolist()        # 간식 그룹에 속한 음식들 리스트
+euje = food_df['name'][food_df['group'] == 8].tolist()          # 유제품 그룹에 속한 음식들 리스트
+empty_food = food_df['name'][food_df['group'] == 9].tolist()    # 빈칸 그룹에 속한 음식들 리스트
+
+## 각 행위 (슬롯)에 해당하는 음식들의 조건 (condition) 설정
+### : 예를 들어, 행위 0에 해당되는 음식들은 죽, 간식, 유제품, 빈칸이라는 그룹에 속한 음식들이어야 한다는 조건을 설정
 
 # 오전 간식
-action0_condition = jook + gansik + euje + empty_food
-action1_condition = gansik + euje + empty_food
+action0_condition = jook + gansik + euje + empty_food    # 오전간식 클래스: 행위 (슬롯) 0번에 해당되는 음식들 리스트
+action1_condition = gansik + euje + empty_food           # 오전간식 클래스: 행위 (슬롯) 1번에 해당되는 음식들 리스트
 # 오후 간식
-action7_condition = gansik + euje + empty_food
-action8_condition = gansik + euje + empty_food
+action7_condition = gansik + euje + empty_food           # 오후간식 클래스: 행위 (슬롯) 7번에 해당되는 음식들 리스트
+action8_condition = gansik + euje + empty_food           # 오후간식 클래스: 행위 (슬롯) 8번에 해당되는 음식들 리스트
 # 밥
-action2_condition = bab + ilpum + empty_food
-action9_condition = bab + ilpum + empty_food
+action2_condition = bab + ilpum + empty_food             # 밥 클래스: 행위 (슬롯) 2번에 해당되는 음식들 리스트
+action9_condition = bab + ilpum + empty_food             # 밥 클래스: 행위 (슬롯) 9번에 해당되는 음식들 리스트
 # 국
-action3_condition = gook + empty_food
-action10_condition = gook + empty_food
+action3_condition = gook + empty_food                    # 국 클래스: 행위 (슬롯) 3번에 해당되는 음식들 리스트
+action10_condition = gook + empty_food                   # 밥 클래스: 행위 (슬롯) 10번에 해당되는 음식들 리스트
 # 주찬
-action4_condition = juchan + empty_food
-action11_condition = juchan + empty_food
+action4_condition = juchan + empty_food                  # 주찬 클래스: 행위 (슬롯) 4번에 해당되는 음식들 리스트
+action11_condition = juchan + empty_food                 # 주찬 클래스: 행위 (슬롯) 11번에 해당되는 음식들 리스트
 # 부찬
-action5_condition = buchan + empty_food
-action12_condition = buchan + empty_food
+action5_condition = buchan + empty_food                  # 부찬 클래스: 행위 (슬롯) 5번에 해당되는 음식들 리스트   
+action12_condition = buchan + empty_food                 # 부찬 클래스: 행위 (슬롯) 12번에 해당되는 음식들 리스트
 # 김치
-action6_condition = kimchi + empty_food
-action13_condition = kimchi + empty_food
+action6_condition = kimchi + empty_food                  # 김치 클래스: 행위 (슬롯) 6번에 해당되는 음식들 리스트
+action13_condition = kimchi + empty_food                 # 김치 클래스: 행위 (슬롯) 6번에 해당되는 음식들 리스트
 
-condition0_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action0_condition]
-condition1_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action1_condition]
-condition2_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action2_condition]
-condition3_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action3_condition]
-condition4_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action4_condition]
-condition5_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action5_condition]
-condition6_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action6_condition]
-condition7_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action7_condition]
-condition8_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action8_condition]
-condition9_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action9_condition]
-condition10_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action10_condition]
-condition11_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action11_condition]
-condition12_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action12_condition]
-condition13_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action13_condition]
+### 각 슬롯 조건에 부함하는 음식들의 인덱스 리스트 저장
+condition0_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action0_condition]     # 행위 (슬롯) 0번에 해당되는 음식들의 인덱스
+condition1_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action1_condition]     # 행위 (슬롯) 1번에 해당되는 음식들의 인덱스
+condition2_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action2_condition]     # 행위 (슬롯) 2번에 해당되는 음식들의 인덱스
+condition3_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action3_condition]     # 행위 (슬롯) 3번에 해당되는 음식들의 인덱스
+condition4_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action4_condition]     # 행위 (슬롯) 4번에 해당되는 음식들의 인덱스
+condition5_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action5_condition]     # 행위 (슬롯) 5번에 해당되는 음식들의 인덱스
+condition6_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action6_condition]     # 행위 (슬롯) 6번에 해당되는 음식들의 인덱스
+condition7_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action7_condition]     # 행위 (슬롯) 7번에 해당되는 음식들의 인덱스
+condition8_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action8_condition]     # 행위 (슬롯) 8번에 해당되는 음식들의 인덱스
+condition9_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action9_condition]     # 행위 (슬롯) 9번에 해당되는 음식들의 인덱스
+condition10_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action10_condition]   # 행위 (슬롯) 10번에 해당되는 음식들의 인덱스
+condition11_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action11_condition]   # 행위 (슬롯) 11번에 해당되는 음식들의 인덱스
+condition12_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action12_condition]   # 행위 (슬롯) 12번에 해당되는 음식들의 인덱스
+condition13_index = [food_index for food_index, val in enumerate(menu_by_position_label_mat.index.tolist()) if val in action13_condition]   # 행위 (슬롯) 13번에 해당되는 음식들의 인덱스
 
-menu_by_position_label_mat.iloc[condition0_index, 0] = 1
-menu_by_position_label_mat.iloc[condition1_index, 1] = 1
-menu_by_position_label_mat.iloc[condition2_index, 2] = 1
-menu_by_position_label_mat.iloc[condition3_index, 3] = 1
-menu_by_position_label_mat.iloc[condition4_index, 4] = 1
-menu_by_position_label_mat.iloc[condition5_index, 5] = 1
-menu_by_position_label_mat.iloc[condition6_index, 6] = 1
-menu_by_position_label_mat.iloc[condition7_index, 7] = 1
-menu_by_position_label_mat.iloc[condition8_index, 8] = 1
-menu_by_position_label_mat.iloc[condition9_index, 9] = 1
-menu_by_position_label_mat.iloc[condition10_index, 10] = 1
-menu_by_position_label_mat.iloc[condition11_index, 11] = 1
-menu_by_position_label_mat.iloc[condition12_index, 12] = 1
-menu_by_position_label_mat.iloc[condition13_index, 13] = 1
-
+# 위의 condition을 따르는 음식 - 슬롯넘버 형태의 원핫인코딩 행렬 만들어주기
+## menu_by_position_label_mat : foods x position 행렬; index (row)는 음식명, column은 슬롯넘버인 행렬; 데이터 기반 분포; 
+## menu_by_position_label_ones : foods x position 행렬; index (row)는 음식명, column은 슬롯넘버인 행렬; 행위 (슬롯)에 해당하는 조건 기반 균일분포;
 menu_by_position_label_ones = copy.deepcopy(menu_by_position_label_mat)
+menu_by_position_label_ones[menu_by_position_label_ones >= 0] = 0
+
+menu_by_position_label_ones.iloc[condition0_index, 0] = 1
+menu_by_position_label_ones.iloc[condition1_index, 1] = 1 
+menu_by_position_label_ones.iloc[condition2_index, 2] = 1
+menu_by_position_label_ones.iloc[condition3_index, 3] = 1
+menu_by_position_label_ones.iloc[condition4_index, 4] = 1
+menu_by_position_label_ones.iloc[condition5_index, 5] = 1
+menu_by_position_label_ones.iloc[condition6_index, 6] = 1
+menu_by_position_label_ones.iloc[condition7_index, 7] = 1
+menu_by_position_label_ones.iloc[condition8_index, 8] = 1
+menu_by_position_label_ones.iloc[condition9_index, 9] = 1
+menu_by_position_label_ones.iloc[condition10_index, 10] = 1
+menu_by_position_label_ones.iloc[condition11_index, 11] = 1
+menu_by_position_label_ones.iloc[condition12_index, 12] = 1
+menu_by_position_label_ones.iloc[condition13_index, 13] = 1
 
 
 ## (4) 행위벡터 정의
@@ -119,14 +124,6 @@ menu_by_position_label_ones = copy.deepcopy(menu_by_position_label_mat)
 num_of_position = 14
 actions = num_of_position # 선택 포지션
 actions = list(range(actions))
-
-## (5) 전이행렬 정의 (균일확률분포)
-transition_matrix = np.ones([len(menu_by_position_label_mat.index), len(menu_by_position_label_mat.index)])
-transition_matrix = pd.DataFrame(transition_matrix, index = menu_by_position_label_mat.index.tolist(), columns = menu_by_position_label_mat.index.tolist()).astype(int)
-
-## (6) 행위 / 음식 분포 (업데이트)
-action_distribution = np.ones([len(actions)]).astype(int).tolist()
-food_distribution = np.ones([food_df.shape[0]]).astype(int).tolist()
 
 # %%
 # for 문 도는 구간
@@ -141,7 +138,7 @@ model = build_model(state_size, action_size)
 Env = env(food_df, menu_by_position_label_mat, menu_by_position_label_ones, action_size, reward_depth)
 
 ## (10) 엡실론 초기화 (초기화 하면 안도니ㅏ...?)
-epsilon = 0.2
+epsilon = 0.0
 # epsilon_decay = 0.99999
 epsilon_decay = 1
 epsilon_min = 0.01
@@ -223,8 +220,7 @@ for k in range(num_of_samples):
         next_action, next_state_vector2 = get_action(next_state_vector, actions, model, epsilon) # action_space, actions, actions_to_action_space, model, epsilon 전부 _init_에 선언될 전역 변수
 
 
-        # if(check_list['Depth_IN'] == "Yes"):
-        num_updates += 1
+        num_updates += 1 # update 개수 세기
 
         ## (14) 모델 학습
         epsilon, mse_loss = train_model(state_vector, action, next_action, reward, reward_grad, reward_mean, next_state_vector, epsilon, epsilon_decay, epsilon_min, discount_factor, model, reward_depth, max_reward)
@@ -237,13 +233,11 @@ for k in range(num_of_samples):
         w_origin = w_update
 
 
-        # Back Sampling (최고난이도 보상은 딱 한번 확보되기 떄문에, 중간 단계 보상도 한번만 확보되게 하기 위해서)
-        if reward < max_reward:
-            sampled_food_list[action] = old_food
-            # next_state_vector = get_state(sampled_food_list, one_hot_encoding_origin)
-            one_hot_encoding = copy.deepcopy(one_hot_encoding_origin)
+        # Back Sampling
+        if reward < max_reward:                                       # 새로 확보한 보상이 이전까지 확보된 최대 보상보다 작다면 
+            sampled_food_list[action] = old_food                      # 다시 이전 food_list로 리턴
+            one_hot_encoding = copy.deepcopy(one_hot_encoding_origin) # one_hot_encoding도 이전으로 리턴
 
-        # MarkovChain_list.append(sampled_food_list[action])
         score += check_list['reward']
         if check_list['reward'] > max_reward:
             max_reward = copy.deepcopy(check_list['reward'])
@@ -298,17 +292,10 @@ for k in range(num_of_samples):
 
 
     if ((k != 0) and (k % 10 == 0)):
-        # action_reward_distribution.plot(kind = 'bar')
         action_reward_distribution.to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/Deep Q-Learning/gen_sample/action_reward.csv'))
         action_MAX_reward_distribution.to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/Deep Q-Learning/gen_sample/Action_Per_Reward_Depth.csv'))
-        # MarkovChain_list.to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/gen_sample/MarkovChain.csv'))
         Action_Reward_PATH = pd.DataFrame(np.matrix(action_reward_distribution) + np.matrix(action_MAX_reward_distribution)).T
         Action_Reward_PATH.to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/Deep Q-Learning/gen_sample/Action_Reward_PATH.csv'))
-        # pd.DataFrame(Thompson_Tensor).to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/gen_sample/Thompson_RewardAction_Tuple.csv'))
-        # menu_by_position_label_mat.to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/gen_sample/Menu_By_Position.csv'))
-        # plt.show()
-        # top10_list = transition_matrix.sum(axis = 1).sort_values(ascending = False)[0:10].index.tolist()
-        # transition_matrix.loc[top10_list, top10_list].style.background_gradient(axis = 1, cmap = 'Blues')
     if (k == (num_of_samples - 1)):
         The_Message = pd.Series(str('EveryThing Is Done ~!'))
         The_Message.to_csv(Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/Deep Q-Learning/gen_sample/Finish_Letter.csv'))
