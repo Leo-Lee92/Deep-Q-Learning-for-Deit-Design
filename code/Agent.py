@@ -1,4 +1,14 @@
 #%%
+import tensorflow as tf
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.models import Sequential
+from keras.optimizers import Adam
+from keras import initializers
+import copy
+import numpy as np
+import random as rd
+
 # 가치함수 근사모델을 정의하는 함수
 def build_model(state_size, action_size):
     # seed_nb = 14
@@ -27,7 +37,7 @@ def build_model(state_size, action_size):
 
     return model
 
-def train_model(state, action, next_action, reward, reward_grad, reward_mean, next_state, epsilon, epsilon_decay, epsilon_min, discount_factor, model):
+def train_model(state, action, next_action, reward, reward_grad, reward_mean, next_state, epsilon, epsilon_decay, epsilon_min, discount_factor, model, reward_depth, max_reward):
     # epsilon, epsilon_decay, epsilon_min, discount_factor, model 은 전역변수
     if epsilon > epsilon_min:
         epsilon *= epsilon_decay

@@ -1,3 +1,10 @@
+# %%
+import pandas as pd
+import numpy as np
+import copy
+import csv
+from pathlib import Path
+
 def data_preprocessing(food_df, list_of_menus_df):
     
     # (2) 데이터 통합
@@ -134,7 +141,7 @@ def data_preprocessing(food_df, list_of_menus_df):
 
 
 def parameter_read(param_set):
-    file_path = Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/gen_sample/Parameter_new.csv')
+    file_path = Path('/home/messy92/Leo/Project_Gosin/Q_Learning/Code/Deep Q-Learning/gen_sample/Parameter_new.csv')
     if file_path.is_file() == False:
         with open(file_path, 'w', newline = '') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames = list(param_set.keys()))
